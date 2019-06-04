@@ -1,7 +1,7 @@
 # Учебный проект «Код и Магия» [![Build status][travis-image]][travis-url]
 
 * Студент: [Наталия Таркова](https://up.htmlacademy.ru/javascript/17/user/704313).
-* Наставник: `Неизвестно`.
+* Наставник: [Евгений Карпов](https://up.htmlacademy.ru/javascript/17/user/70583).
 
 ---
 
