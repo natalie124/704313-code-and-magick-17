@@ -73,10 +73,10 @@ function drawWizards(quantity) {
     fragment.appendChild(wizard);
   }
 
-  similarListElement.appendChild(fragment);
+  return similarListElement.appendChild(fragment);
 
-  document.querySelector('.setup').classList.remove('hidden');
-  document.querySelector('.setup-similar').classList.remove('hidden');
 }
 
+document.querySelector('.setup').classList.remove('hidden');
+document.querySelector('.setup-similar').classList.remove('hidden');
 drawWizards(4);
