@@ -1,5 +1,7 @@
 'use strict';
-
+// коды клавишь
+var KEY_CODE_ENTER = 13;
+var KEY_CODE_ESC = 27;
 // для настройки окна (открыть/закрыть)
 var setup = document.querySelector('.setup');
 var setupOpen = document.querySelector('.setup-open');
@@ -85,20 +87,20 @@ function onSetupCloseClick() {
 }
 
 function onSetupIconEnterPress(evt) {
-  if (evt.keyCode === 13) {
+  if (evt.keyCode === KEY_CODE_ENTER) {
     openSetup();
   }
 }
 
 function onEscPress(evt) {
-  if (evt.keyCode === 27 && setupUserName !== document.activeElement) {
+  if (evt.keyCode === KEY_CODE_ESC && setupUserName !== document.activeElement) {
     evt.preventDefault();
     closeSetup();
   }
 }
 
 function onSetupCloseEnterPress(evt) {
-  if (evt.keyCode === 13 && setupClose === document.activeElement) {
+  if (evt.keyCode === KEY_CODE_ENTER && setupClose === document.activeElement) {
     evt.preventDefault();
     closeSetup();
   }
