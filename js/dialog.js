@@ -13,35 +13,40 @@ function onDialogHandleMouseDown(evt) {
   var dragged = false;
 
   function onMouseMove(moveEvt) {
-    moveEvt.preventDefault();
-
-    dragged = true;
-
+    var dialogHandleLeft = setup.offsetLeft;
+    var dialogHandleTop = setup.offsetTop;
     var shift = {
       x: startCoords.x - moveEvt.clientX,
       y: startCoords.y - moveEvt.clientY
     };
+
+    moveEvt.preventDefault();
+
+    dragged = true;
 
     startCoords = {
       x: moveEvt.clientX,
       y: moveEvt.clientY
     };
 
-    setup.style.top = (setup.offsetTop - shift.y) + 'px';
-    setup.style.left = (setup.offsetLeft - shift.x) + 'px';
+    dialogHandleTop = (dialogHandleTop - shift.y);
+    dialogHandleLeft = (dialogHandleLeft - shift.x);
 
-    if (setup.offsetLeft < setup.offsetWidth / 2) {
-      setup.style.left = setup.offsetWidth / 2 + 'px';
+    if (dialogHandleLeft < setup.offsetWidth / 2) {
+      dialogHandleLeft = setup.offsetWidth / 2;
     }
-    if (setup.offsetLeft > screen.width - setup.offsetWidth / 2) {
-      setup.style.left = screen.width - setup.offsetWidth / 2 + 'px';
+    if (dialogHandleLeft > document.body.clientWidth - setup.offsetWidth / 2) {
+      dialogHandleLeft = document.body.clientWidth - setup.offsetWidth / 2;
     }
     if (setup.offsetTop < 0) {
-      setup.style.top = 0;
+      dialogHandleTop = 0;
     }
-    if (setup.offsetTop > screen.height - setup.offsetHeight / 2) {
-      setup.style.top = screen.height - setup.offsetHeight / 2 + 'px';
+    if (dialogHandleTop > screen.height - setup.offsetHeight / 2) {
+      dialogHandleTop = screen.height - setup.offsetHeight / 2;
     }
+
+    setup.style.left = dialogHandleLeft + 'px';
+    setup.style.top = dialogHandleTop + 'px';
   }
 
   function onMouseUp(upEvt) {
@@ -64,7 +69,7 @@ function onDialogHandleMouseDown(evt) {
   document.addEventListener('mouseup', onMouseUp);
 }
 
-// функция обработчик перетаскивания предметов из рюкзака
+// функция обработчик перетаскивания предметов из магазина в рюкзак
 function onShopMouseDown(evt) {
   var backpack = setup.querySelector('.setup-artifacts');
   var artifactCell = setup.querySelector('.setup-artifacts-cell');
@@ -75,12 +80,12 @@ function onShopMouseDown(evt) {
   };
 
   function onMouseMove(moveEvt) {
-    moveEvt.preventDefault();
-
     var shift = {
       x: startCoords.x - moveEvt.clientX,
       y: startCoords.y - moveEvt.clientY
     };
+
+    moveEvt.preventDefault();
 
     startCoords = {
       x: moveEvt.clientX,
@@ -107,15 +112,14 @@ function onShopMouseDown(evt) {
   }
 
   if (artifact.tagName === 'IMG') {
-
-    artifact.style.position = 'absolute';
-
-    evt.preventDefault();
-
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
+
+    artifact.style.position = 'absolute';
+
+    evt.preventDefault();
 
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
