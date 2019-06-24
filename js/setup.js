@@ -1,17 +1,26 @@
 'use strict';
+// коды клавишь
+
+var KEY_CODE_ENTER = 13;
+var KEY_CODE_ESC = 27;
 
 // для настройки окна (открыть/закрыть)
+
 var setup = document.querySelector('.setup');
 var setupOpen = document.querySelector('.setup-open');
 var setupClose = setup.querySelector('.setup-close');
 var setupIcon = setupOpen.querySelector('.setup-open-icon');
+
 // для настройки персонажа (имя, цвет(мантии, глаз, фаербола))
+
 var setupUserName = setup.querySelector('.setup-user-name');
 var setupWizard = setup.querySelector('.setup-wizard');
 var setupWizardCoat = setupWizard.querySelector('.wizard-coat');
 var setupWizardEyes = setupWizard.querySelector('.wizard-eyes');
 var setupFireball = setup.querySelector('.setup-fireball-wrap');
+
 // данные для настройки персонажей
+
 var wizardCoatColors = [
   'rgb(101, 137, 164)',
   'rgb(241, 43, 107)',
@@ -66,6 +75,7 @@ function getRandomInt(min, max) {
 }
 
 // функции показа окна настроек
+
 function openSetup() {
   setup.classList.remove('hidden');
   document.addEventListener('keydown', onEscPress);
@@ -73,9 +83,12 @@ function openSetup() {
 
 function closeSetup() {
   setup.classList.add('hidden');
+  setup.removeAttribute('style');
   document.removeEventListener('keydown', onEscPress);
 }
+
 // функции обработчки событий показа окна настроек
+
 function onSetupOpenClick() {
   openSetup();
 }
@@ -85,25 +98,27 @@ function onSetupCloseClick() {
 }
 
 function onSetupIconEnterPress(evt) {
-  if (evt.keyCode === 13) {
+  if (evt.keyCode === KEY_CODE_ENTER) {
     openSetup();
   }
 }
 
 function onEscPress(evt) {
-  if (evt.keyCode === 27 && setupUserName !== document.activeElement) {
+  if (evt.keyCode === KEY_CODE_ESC && setupUserName !== document.activeElement) {
     evt.preventDefault();
     closeSetup();
   }
 }
 
 function onSetupCloseEnterPress(evt) {
-  if (evt.keyCode === 13 && setupClose === document.activeElement) {
+  if (evt.keyCode === KEY_CODE_ENTER && setupClose === document.activeElement) {
     evt.preventDefault();
     closeSetup();
   }
 }
+
 // функции обработчики событий настроек персонажа
+
 function onSetupWizardCoatClick() {
   var setupWizardCoatInput = setup.querySelector('input[name = coat-color]');
   var color = wizardCoatColors[getRandomInt(0, wizardCoatColors.length - 1)];
@@ -164,13 +179,22 @@ function drawWizards(quantity, coatColors, eyesColors, names, familyNames) {
   return similarListElement.appendChild(fragment);
 }
 
+// отрисовка волшебников
+
+document.querySelector('.setup-similar').classList.remove('hidden');
+drawWizards(4, wizardCoatColors, wizardEyesColors, wizardNames, wizardFamilyNames);
+
 // добавление событий:
+
 // показа окна
+
 setupOpen.addEventListener('click', onSetupOpenClick);
 setupClose.addEventListener('click', onSetupCloseClick);
 setupClose.addEventListener('keydown', onSetupCloseEnterPress);
 setupIcon.addEventListener('keydown', onSetupIconEnterPress);
+
 // валидации поля для ввода имени персонажа
+
 setupUserName.addEventListener('invalid', function () {
   if (setupUserName.validity.tooShort) {
     setupUserName.setCustomValidity('Имя должно состоять минимум из 2-x символов');
@@ -180,12 +204,9 @@ setupUserName.addEventListener('invalid', function () {
     setupUserName.setCustomValidity('');
   }
 });
+
 // настройки персонажа
+
 setupWizardCoat.addEventListener('click', onSetupWizardCoatClick);
 setupWizardEyes.addEventListener('click', onSetupWizardEyesClick);
 setupFireball.addEventListener('click', onSetupFireballClick);
-
-// отрисовка волшебников
-
-document.querySelector('.setup-similar').classList.remove('hidden');
-drawWizards(4, wizardCoatColors, wizardEyesColors, wizardNames, wizardFamilyNames);
