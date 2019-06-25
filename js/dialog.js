@@ -1,110 +1,57 @@
 'use strict';
 
-var setup = document.querySelector('.setup');
-var dialogHandle = setup.querySelector('.upload');
-var shopElement = document.querySelector('.setup-artifacts-shop');
+(function () {
 
-// функция обработчик перетаскивания окна setup
-function onDialogHandleMouseDown(evt) {
-  var startCoords = {
-    x: evt.clientX,
-    y: evt.clientY
-  };
-  var dragged = false;
+  var setup = document.querySelector('.setup');
+  var setupOpen = document.querySelector('.setup-open');
+  var setupClose = setup.querySelector('.setup-close');
+  var setupIcon = setupOpen.querySelector('.setup-open-icon');
+  var setupUserName = setup.querySelector('.setup-user-name');
 
-  function onMouseMove(moveEvt) {
-    var dialogHandleLeft = setup.offsetLeft;
-    var dialogHandleTop = setup.offsetTop;
-    var shift = {
-      x: startCoords.x - moveEvt.clientX,
-      y: startCoords.y - moveEvt.clientY
-    };
+  // функции показа окна настроек
 
-    moveEvt.preventDefault();
-
-    dragged = true;
-
-    startCoords = {
-      x: moveEvt.clientX,
-      y: moveEvt.clientY
-    };
-
-    dialogHandleTop = (dialogHandleTop - shift.y);
-    dialogHandleLeft = (dialogHandleLeft - shift.x);
-
-    if (dialogHandleLeft < setup.offsetWidth / 2) {
-      dialogHandleLeft = setup.offsetWidth / 2;
-    }
-    if (dialogHandleLeft > document.body.clientWidth - setup.offsetWidth / 2) {
-      dialogHandleLeft = document.body.clientWidth - setup.offsetWidth / 2;
-    }
-    if (setup.offsetTop < 0) {
-      dialogHandleTop = 0;
-    }
-    if (dialogHandleTop > screen.height - setup.offsetHeight / 2) {
-      dialogHandleTop = screen.height - setup.offsetHeight / 2;
-    }
-
-    setup.style.left = dialogHandleLeft + 'px';
-    setup.style.top = dialogHandleTop + 'px';
+  function openSetup() {
+    setup.classList.remove('hidden');
+    document.addEventListener('keydown', onEscPress);
   }
 
-  function onMouseUp(upEvt) {
-    upEvt.preventDefault();
+  function closeSetup() {
+    setup.classList.add('hidden');
+    setup.removeAttribute('style');
+    document.removeEventListener('keydown', onEscPress);
+  }
 
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
+  // функции обработчки событий показа окна настроек
 
-    function onClickPreventDefault(dragEvt) {
-      dragEvt.preventDefault();
-      dialogHandle.removeEventListener('click', onClickPreventDefault);
-    }
+  function onSetupOpenClick() {
+    openSetup();
+  }
 
-    if (dragged) {
-      dialogHandle.addEventListener('click', onClickPreventDefault);
+  function onSetupCloseClick() {
+    closeSetup();
+  }
+
+  function onSetupIconEnterPress(evt) {
+    window.util.isEnterEvent(evt, openSetup);
+  }
+
+  function onEscPress(evt) {
+    if (setupUserName !== document.activeElement) {
+      evt.preventDefault();
+      window.util.isEscEvent(evt, closeSetup);
     }
   }
-  evt.preventDefault();
-  document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp);
-}
 
-// функция обработчик перетаскивания предметов из магазина в рюкзак
-function onShopElementDragAndDrop(evt) {
-  var artifactsElement = document.querySelector('.setup-artifacts');
-  var draggedItem = null;
-
-  function onArtifactsElementDragover(dragoverEvt) {
-    dragoverEvt.preventDefault();
-    return false;
+  function onSetupCloseEnterPress(evt) {
+    if (setupClose === document.activeElement) {
+      evt.preventDefault();
+      window.util.isEnterEvent(evt, closeSetup);
+    }
   }
 
-  function onArtifactElementDrop(dropEvt) {
-    dropEvt.preventDefault();
-    dropEvt.target.style.backgroundColor = '';
-    dropEvt.target.appendChild(draggedItem);
-  }
+  setupOpen.addEventListener('click', onSetupOpenClick);
+  setupClose.addEventListener('click', onSetupCloseClick);
+  setupClose.addEventListener('keydown', onSetupCloseEnterPress);
+  setupIcon.addEventListener('keydown', onSetupIconEnterPress);
 
-  function onArtifactElementDragenter(dragenterEvt) {
-    dragenterEvt.target.style.backgroundColor = 'yellow';
-    dragenterEvt.preventDefault();
-  }
-
-  function onArtifactElementDragleave(dragleaveEvt) {
-    dragleaveEvt.target.style.backgroundColor = '';
-    dragleaveEvt.preventDefault();
-  }
-
-  if (evt.target.tagName.toLowerCase() === 'img') {
-    draggedItem = evt.target;
-    evt.dataTransfer.setData('text/plain', evt.target.alt);
-  }
-
-  artifactsElement.addEventListener('dragover', onArtifactsElementDragover);
-  artifactsElement.addEventListener('drop', onArtifactElementDrop);
-  artifactsElement.addEventListener('dragenter', onArtifactElementDragenter);
-  artifactsElement.addEventListener('dragleave', onArtifactElementDragleave);
-}
-
-dialogHandle.addEventListener('mousedown', onDialogHandleMouseDown);
-shopElement.addEventListener('dragstart', onShopElementDragAndDrop);
+})();
