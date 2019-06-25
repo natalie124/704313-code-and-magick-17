@@ -2,7 +2,7 @@
 
 var setup = document.querySelector('.setup');
 var dialogHandle = setup.querySelector('.upload');
-var shop = setup.querySelector('.setup-artifacts-shop');
+var shopElement = document.querySelector('.setup-artifacts-shop');
 
 // функция обработчик перетаскивания окна setup
 function onDialogHandleMouseDown(evt) {
@@ -70,61 +70,41 @@ function onDialogHandleMouseDown(evt) {
 }
 
 // функция обработчик перетаскивания предметов из магазина в рюкзак
-function onShopMouseDown(evt) {
-  var backpack = setup.querySelector('.setup-artifacts');
-  var artifactCell = setup.querySelector('.setup-artifacts-cell');
-  var artifact = evt.target;
-  var defaultCoords = {
-    x: artifact.offsetLeft,
-    y: artifact.offsetTop
-  };
+function onShopElementDragAndDrop(evt) {
+  var artifactsElement = document.querySelector('.setup-artifacts');
+  var draggedItem = null;
 
-  function onMouseMove(moveEvt) {
-    var shift = {
-      x: startCoords.x - moveEvt.clientX,
-      y: startCoords.y - moveEvt.clientY
-    };
-
-    moveEvt.preventDefault();
-
-    startCoords = {
-      x: moveEvt.clientX,
-      y: moveEvt.clientY
-    };
-
-    artifact.style.top = (artifact.offsetTop - shift.y) + 'px';
-    artifact.style.left = (artifact.offsetLeft - shift.x) + 'px';
+  function onArtifactsElementDragover(dragoverEvt) {
+    dragoverEvt.preventDefault();
+    return false;
   }
 
-  function onMouseUp(upEvt) {
-    upEvt.preventDefault();
-
-    if (artifact.offsetLeft < backpack.offsetLeft - artifactCell.offsetWidth / 2.5 ||
-        artifact.offsetLeft > backpack.offsetLeft + backpack.offsetWidth - artifactCell.offsetWidth ||
-        artifact.offsetTop < backpack.offsetTop + backpack.offsetHeight / 2 + artifactCell.offsetHeight ||
-        artifact.offsetTop > backpack.offsetTop + backpack.offsetHeight * 2 - artifactCell.offsetHeight * 1.5) {
-
-      artifact.style.top = defaultCoords.y + 'px';
-      artifact.style.left = defaultCoords.x + 'px';
-    }
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
+  function onArtifactElementDrop(dropEvt) {
+    dropEvt.preventDefault();
+    dropEvt.target.style.backgroundColor = '';
+    dropEvt.target.appendChild(draggedItem);
   }
 
-  if (artifact.tagName === 'IMG') {
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
-
-    artifact.style.position = 'absolute';
-
-    evt.preventDefault();
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+  function onArtifactElementDragenter(dragenterEvt) {
+    dragenterEvt.target.style.backgroundColor = 'yellow';
+    dragenterEvt.preventDefault();
   }
+
+  function onArtifactElementDragleave(dragleaveEvt) {
+    dragleaveEvt.target.style.backgroundColor = '';
+    dragleaveEvt.preventDefault();
+  }
+
+  if (evt.target.tagName.toLowerCase() === 'img') {
+    draggedItem = evt.target;
+    evt.dataTransfer.setData('text/plain', evt.target.alt);
+  }
+
+  artifactsElement.addEventListener('dragover', onArtifactsElementDragover);
+  artifactsElement.addEventListener('drop', onArtifactElementDrop);
+  artifactsElement.addEventListener('dragenter', onArtifactElementDragenter);
+  artifactsElement.addEventListener('dragleave', onArtifactElementDragleave);
 }
 
 dialogHandle.addEventListener('mousedown', onDialogHandleMouseDown);
-shop.addEventListener('mousedown', onShopMouseDown);
+shopElement.addEventListener('dragstart', onShopElementDragAndDrop);
