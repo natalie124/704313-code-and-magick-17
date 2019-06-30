@@ -12,6 +12,8 @@
   var form = setup.querySelector('.setup-wizard-form');
   var setupButton = setup.querySelector('.setup-submit');
 
+  var similarListElement = document.querySelector('.setup-similar-list');
+
   function renderWizard(wizard) {
     var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
     var wizardElement = similarWizardTemplate.cloneNode(true);
@@ -23,8 +25,15 @@
     return wizardElement;
   }
 
+  function deleteWizards() {
+    var wizards = similarListElement.querySelectorAll('.setup-similar-item');
+    for (var i = 0; i < wizards.length; i++) {
+      wizards[i].remove();
+    }
+  }
+
   function successHandler(wizards) {
-    var similarListElement = document.querySelector('.setup-similar-list');
+
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < QUANTITY; i++) {
@@ -62,6 +71,7 @@
 
     setup.classList.add('hidden');
     setup.removeAttribute('style');
+    deleteWizards();
 
     if (error !== null) {
       error.remove();
