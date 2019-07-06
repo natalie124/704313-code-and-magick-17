@@ -10,13 +10,31 @@
   var form = setup.querySelector('.setup-wizard-form');
   var setupButton = setup.querySelector('.setup-submit');
 
-// открывает окно настройки
+  // показывает текст ошибки на странице
+
+  function errorHandler(errorMessage) {
+    var node = document.createElement('div');
+    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    node.style.position = 'absolute';
+    node.style.left = 0;
+    node.style.right = 0;
+    node.style.fontSize = '30px';
+
+    node.classList.add('error-js');
+
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+
+    setupButton.disabled = false;
+  }
+
+  // открывает окно настройки
   function openSetup() {
     setup.classList.remove('hidden');
     document.addEventListener('keydown', onEscPress);
-    window.backend.load(window.similar.success, window.util.errorHandler);
+    window.backend.load(window.similar.success, errorHandler);
   }
-// закрывает окно настройки
+  // закрывает окно настройки
   function closeSetup() {
     var error = document.querySelector('.error-js');
 
@@ -54,12 +72,8 @@
   // функция обработчик события отправки формы
 
   function onFormSubmit(evt) {
-    var error = document.querySelector('.error-js');
-
     setupButton.disabled = true;
-
-    window.backend.save(new FormData(form), closeSetup, window.util.errorHandler);
-
+    window.backend.save(new FormData(form), closeSetup, errorHandler);
     evt.preventDefault();
   }
 

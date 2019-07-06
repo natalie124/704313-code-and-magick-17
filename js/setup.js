@@ -14,6 +14,11 @@
   var setupWizardEyesInput = setup.querySelector('input[name = eyes-color]');
   var setupFireballInput = setupFireball.querySelector('input[name = fireball-color]');
 
+  var Color = {
+    COAT: setupWizardCoatInput.value,
+    EYES: setupWizardEyesInput.value
+  };
+
   var wizardCoatColors = [
     'rgb(101, 137, 164)',
     'rgb(241, 43, 107)',
@@ -39,21 +44,16 @@
     '#e6e848'
   ];
 
-  window.Color = {
-    COAT: setupWizardCoatInput.value,
-    EYES: setupWizardEyesInput.value
-  }
-
   // функции обработчики событий настроек персонажа
 
   function onSetupWizardCoatClick() {
 
     var color = wizardCoatColors[window.util.getRandomInt(0, wizardCoatColors.length - 1)];
 
-    this.style.fill = color;
-    this.value = color;
+    setupWizardCoat.style.fill = color;
+    setupWizardCoatInput.value = color;
+    Color.COAT = color;
     window.util.debounce(function () {
-      Color.COAT = color;
       window.similar.update();
     });
   }
@@ -62,11 +62,10 @@
 
     var color = wizardEyesColors[window.util.getRandomInt(0, wizardEyesColors.length - 1)];
 
-    this.style.fill = color;
-    this.value = color;
-
+    setupWizardEyes.style.fill = color;
+    setupWizardEyesInput.value = color;
+    Color.EYES = color;
     window.util.debounce(function () {
-      Color.EYES = color;
       window.similar.update();
     });
   }
@@ -75,8 +74,8 @@
 
     var color = wizardFireballColors[window.util.getRandomInt(0, wizardFireballColors.length - 1)];
 
-    this.style.backgroundColor = color;
-    this.value = color;
+    setupFireballInput.style.backgroundColor = color;
+    setupFireballInput.value = color;
   }
 
   // валидации поля для ввода имени персонажа
@@ -96,5 +95,9 @@
   setupWizardCoat.addEventListener('click', onSetupWizardCoatClick);
   setupWizardEyes.addEventListener('click', onSetupWizardEyesClick);
   setupFireball.addEventListener('click', onSetupFireballClick);
+
+  window.setup = {
+    color: Color
+  };
 
 })();

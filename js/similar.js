@@ -1,5 +1,5 @@
 'use strict';
- (function () {
+(function () {
 
   var QUANTITY = 4; // количество волшебников для отрисовки
 
@@ -27,12 +27,12 @@
   }
 
   // рисует волшебников на странице
-  function renderWizards(wizards) {
+  function renderWizards(wizardsList) {
 
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < QUANTITY; i++) {
-      fragment.appendChild(renderWizard(wizards[i]));
+      fragment.appendChild(renderWizard(wizardsList[i]));
     }
     similarListElement.appendChild(fragment);
 
@@ -42,22 +42,22 @@
   // удаляет волшебников со страницы
 
   function removeWizards() {
-    var wizards = similarListElement.querySelectorAll('.setup-similar-item');
+    var wizardsList = similarListElement.querySelectorAll('.setup-similar-item');
 
-    wizards.forEach(function (wizard) {
+    wizardsList.forEach(function (wizard) {
       wizard.remove();
     });
   }
 
   // получает рейтинг похожести волшебника
 
-function getRank(wizard) {
+  function getRank(wizard) {
     var rank = 0;
 
-    if (wizard.colorCoat === window.Color.COAT) {
+    if (wizard.colorCoat === window.setup.color.COAT) {
       rank += Rank.COAT;
     }
-    if (wizard.colorEyes === window.Color.EYES) {
+    if (wizard.colorEyes === window.setup.color.EYES) {
       rank += Rank.EYES;
     }
 
@@ -87,4 +87,4 @@ function getRank(wizard) {
     update: updateWizards,
     success: successHandler
   };
- })();
+})();
