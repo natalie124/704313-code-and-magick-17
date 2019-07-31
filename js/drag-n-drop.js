@@ -1,18 +1,23 @@
 'use strict';
-
 (function () {
-
   var setup = document.querySelector('.setup');
   var dialogHandle = setup.querySelector('.upload');
-
-  // функция обработчик перетаскивания окна setup
+  /**
+   * обработчик события перетаскивая окна настроек персонажа
+   * @param {object} evt объект события
+   *
+   */
   function onDialogHandleMouseDown(evt) {
     var startCoords = {
       x: evt.clientX,
       y: evt.clientY
     };
     var dragged = false;
-
+    /**
+     * обработчик события mouse move
+     * @param {object} moveEvt объект события
+     *
+     */
     function onMouseMove(moveEvt) {
       var dialogHandleLeft = setup.offsetLeft;
       var dialogHandleTop = setup.offsetTop;
@@ -49,18 +54,24 @@
       setup.style.left = dialogHandleLeft + 'px';
       setup.style.top = dialogHandleTop + 'px';
     }
-
+    /**
+     * обработчик события mouse up
+     * @param {object} upEvt объект события
+     *
+     */
     function onMouseUp(upEvt) {
-      upEvt.preventDefault();
-
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-
+      /**
+       * обработчик события click
+       * @param {object} dragEvt объект события
+       *
+       */
       function onClickPreventDefault(dragEvt) {
         dragEvt.preventDefault();
         dialogHandle.removeEventListener('click', onClickPreventDefault);
       }
-
+      upEvt.preventDefault();
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
       if (dragged) {
         dialogHandle.addEventListener('click', onClickPreventDefault);
       }
@@ -69,7 +80,5 @@
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('mouseup', onMouseUp);
   }
-
   dialogHandle.addEventListener('mousedown', onDialogHandleMouseDown);
-
 })();

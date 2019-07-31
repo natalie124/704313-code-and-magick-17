@@ -1,20 +1,19 @@
 'use strict';
 (function () {
-
-  var QUANTITY = 4; // количество волшебников для отрисовки
-
   var Rank = { // рейтинг похожести волшебников на основе его характеристик
     COAT: 2,
     EYES: 1
   };
-
+  var QUANTITY = 4; // количество волшебников для отрисовки
   var wizards = []; // массив с данными волшебников
-
   var setup = document.querySelector('.setup');
   var similarListElement = document.querySelector('.setup-similar-list');
-
-  // возвращает разметку с данными одного волшебника
-
+  /**
+   * отрисовывает волшебника
+   * @param {object} wizard объект с данными волшебника
+   * @return {object} разметка
+   *
+   */
   function renderWizard(wizard) {
     var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
     var wizardElement = similarWizardTemplate.cloneNode(true);
@@ -25,22 +24,24 @@
 
     return wizardElement;
   }
-
-  // рисует волшебников на странице
+  /**
+   * отрисовывает волшебников на странице
+   * @param {array} wizardsList массив с волшебниками
+   *
+   */
   function renderWizards(wizardsList) {
-
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < QUANTITY; i++) {
       fragment.appendChild(renderWizard(wizardsList[i]));
     }
     similarListElement.appendChild(fragment);
-
     setup.querySelector('.setup-similar').classList.remove('hidden');
   }
-
-  // удаляет волшебников со страницы
-
+  /**
+   * удаляет волшебников со страницы
+   *
+   */
   function removeWizards() {
     var wizardsList = similarListElement.querySelectorAll('.setup-similar-item');
 
@@ -48,9 +49,12 @@
       wizard.remove();
     });
   }
-
-  // получает рейтинг похожести волшебника
-
+  /**
+   * получает рейтинг похожести волшебника
+   * @param {object} wizard объект с данными волшебника
+   * @return {number} рейтинг
+   *
+   */
   function getRank(wizard) {
     var rank = 0;
 
@@ -63,8 +67,10 @@
 
     return rank;
   }
-
-  //  рисует волшебников на основе рейтига похожести
+  /**
+   * рисует волшебников на основе рейтига похожести
+   *
+   */
   function updateWizards() {
     removeWizards();
     renderWizards(wizards.slice().sort(function (left, right) {
@@ -75,16 +81,18 @@
       return rankDiff;
     }));
   }
-
-  // при успешном получении данных с сервера рисует волшебников на странице
-  function successHandler(data) {
+  /**
+   * при успешном получении данных с сервера рисует волшебников на странице
+   * @param {object} data данные с сервера
+   *
+   */
+  function onSuccess(data) {
     wizards = data;
     updateWizards();
   }
-
   window.similar = {
     remove: removeWizards,
     update: updateWizards,
-    success: successHandler
+    success: onSuccess
   };
 })();
