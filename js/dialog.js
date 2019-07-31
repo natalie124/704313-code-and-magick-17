@@ -2,8 +2,6 @@
 
 (function () {
 
-  var QUANTITY = 4;
-
   var setup = document.querySelector('.setup');
   var setupOpen = document.querySelector('.setup-open');
   var setupClose = setup.querySelector('.setup-close');
@@ -12,37 +10,7 @@
   var form = setup.querySelector('.setup-wizard-form');
   var setupButton = setup.querySelector('.setup-submit');
 
-  var similarListElement = document.querySelector('.setup-similar-list');
-
-  function renderWizard(wizard) {
-    var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
-    var wizardElement = similarWizardTemplate.cloneNode(true);
-
-    wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
-    wizardElement.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
-    wizardElement.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
-
-    return wizardElement;
-  }
-
-  function deleteWizards() {
-    var wizards = similarListElement.querySelectorAll('.setup-similar-item');
-    for (var i = 0; i < wizards.length; i++) {
-      wizards[i].remove();
-    }
-  }
-
-  function successHandler(wizards) {
-
-    var fragment = document.createDocumentFragment();
-
-    for (var i = 0; i < QUANTITY; i++) {
-      fragment.appendChild(renderWizard(wizards[i]));
-    }
-    similarListElement.appendChild(fragment);
-
-    setup.querySelector('.setup-similar').classList.remove('hidden');
-  }
+  // показывает текст ошибки на странице
 
   function errorHandler(errorMessage) {
     var node = document.createElement('div');
@@ -56,31 +24,32 @@
 
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
+
+    setupButton.disabled = false;
   }
 
-  // функции показа окна настроек
-
+  // открывает окно настройки
   function openSetup() {
     setup.classList.remove('hidden');
     document.addEventListener('keydown', onEscPress);
-    window.backend.load(successHandler, errorHandler);
+    window.backend.load(window.similar.success, errorHandler);
   }
-
+  // закрывает окно настройки
   function closeSetup() {
     var error = document.querySelector('.error-js');
 
     setup.classList.add('hidden');
     setup.removeAttribute('style');
-    deleteWizards();
+    setupButton.disabled = false;
+    window.similar.remove();
 
     if (error !== null) {
       error.remove();
-      setupButton.disabled = false;
     }
     document.removeEventListener('keydown', onEscPress);
   }
 
-  // функции обработчки событий показа окна настроек
+  // функции обработчки событий окна настроек
 
   function onSetupIconEnterPress(evt) {
     window.util.isEnterEvent(evt, openSetup);
@@ -103,19 +72,8 @@
   // функция обработчик события отправки формы
 
   function onFormSubmit(evt) {
-    var error = document.querySelector('.error-js');
-
     setupButton.disabled = true;
-
-    window.backend.save(new FormData(form), function () {
-      setup.classList.add('hidden');
-      setupButton.disabled = false;
-    }, errorHandler);
-
-    if (error !== null) {
-      error.remove();
-    }
-
+    window.backend.save(new FormData(form), closeSetup, errorHandler);
     evt.preventDefault();
   }
 

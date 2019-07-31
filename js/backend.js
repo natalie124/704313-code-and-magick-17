@@ -28,55 +28,41 @@
     }
   }
 
+  function createRequest(method, onLoad, onError) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.responseType = 'json';
+
+    xhr.addEventListener('load', function () {
+      if (xhr.status === OK_STATUS) {
+        onLoad(xhr.response);
+      } else {
+        onError(getErrorMesage(xhr.status));
+      }
+    });
+    xhr.addEventListener('error', function () {
+      onError(getErrorMesage(xhr.status));
+    });
+
+    xhr.addEventListener('timeout', function () {
+      onError(getErrorMesage(xhr.status));
+    });
+
+    xhr.timeout = TIMEOUT;
+    xhr.open(method, Url[method]);
+
+    return xhr;
+  }
+
   window.backend = {
 
     load: function (onLoad, onError) {
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'json';
-
-      xhr.addEventListener('load', function () {
-        if (xhr.status === OK_STATUS) {
-          onLoad(xhr.response);
-        } else {
-          onError(getErrorMesage(xhr.status));
-        }
-      });
-
-      xhr.addEventListener('error', function () {
-        onError(getErrorMesage(xhr.status));
-      });
-
-      xhr.addEventListener('timeout', function () {
-        onError(getErrorMesage(xhr.status));
-      });
-
-      xhr.timeout = TIMEOUT;
-      xhr.open('GET', Url.GET);
+      var xhr = createRequest('GET', onLoad, onError);
       xhr.send();
     },
 
     save: function (data, onLoad, onError) {
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'json';
-
-      xhr.timeout = TIMEOUT;
-      xhr.open('POST', Url.POST);
-
-      xhr.addEventListener('load', function () {
-        if (xhr.status === OK_STATUS) {
-          onLoad(xhr.response);
-        } else {
-          onError(getErrorMesage(xhr.status));
-        }
-      });
-
-      xhr.addEventListener('error', function () {
-        onError(getErrorMesage(xhr.status));
-      });
-
-      xhr.addEventListener('timeout', function () {
-        onError(getErrorMesage(xhr.status));
-      });
+      var xhr = createRequest('POST', onLoad, onError);
 
       xhr.send(data);
     }
