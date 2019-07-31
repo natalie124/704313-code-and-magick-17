@@ -1,33 +1,35 @@
 'use strict';
-
 (function () {
-
   var Url = {
     GET: 'https://js.dump.academy/code-and-magick/data',
     POST: 'https://js.dump.academy/code-and-magick'
   };
-
+  var ErrorMessage = {
+    500: 'Ошибка 500: Internal Server Error — произошла внутренняя ошибка',
+    404: 'Ошибка 404: Not Found — запрашиваемый ресурс не найден',
+    400: 'Ошибка 400: Bad Request — неправильный запрос',
+    301: 'Ошибка 301: Moved Permanently — ресурс переехал навсегда',
+    307: 'Ошибка 307: Temporary Redirect — ресурс переехал временно',
+    DEFAULT: 'Ошибка загрузки объявления'
+  };
   var TIMEOUT = 10000;
-
   var OK_STATUS = 200;
-
+  /**
+   * Получает сообщение об ошибке
+   * @param {number} error xhr статус ошибки
+   * @return {string} сообщение об ошибке
+   */
   function getErrorMesage(error) {
-    switch (error) {
-      case 500:
-        return 'Internal Server Error — произошла внутренняя ошибка';
-      case 404:
-        return 'Not Found — запрашиваемый ресурс не найден';
-      case 400:
-        return 'Bad Request — неправильный запрос';
-      case 301:
-        return 'Moved Permanently — ресурс переехал навсегда';
-      case 307:
-        return 'Temporary Redirect — ресурс переехал временно';
-      default:
-        return 'Ошибка подключения, попробуйте позже';
-    }
+    return ErrorMessage[error] ? ErrorMessage[error] : ErrorMessage.DEFAULT;
   }
-
+  /**
+   * создает запрос на сервер
+   *
+   * @param {string} method - GET или POST
+   * @param {function} onLoad - действие в случае успеха
+   * @param {number} onError - действие в случае ошибки
+   * @return {object} xhr объект запроса
+   */
   function createRequest(method, onLoad, onError) {
     var xhr = new XMLHttpRequest();
 
@@ -43,7 +45,6 @@
     xhr.addEventListener('error', function () {
       onError(getErrorMesage(xhr.status));
     });
-
     xhr.addEventListener('timeout', function () {
       onError(getErrorMesage(xhr.status));
     });
@@ -53,19 +54,28 @@
 
     return xhr;
   }
-
   window.backend = {
-
+    /**
+     * создает GET запрос на сервер
+     *
+     * @param {function} onLoad - действие в случае успеха
+     * @param {function} onError - действие в случае ошибки
+    */
     load: function (onLoad, onError) {
       var xhr = createRequest('GET', onLoad, onError);
       xhr.send();
     },
-
+    /**
+     * создает POST запрос на сервер
+     *
+     * @param {object} data - объект с данными для сервера
+     * @param {function} onLoad - действие в случае успеха
+     * @param {function} onError - действие в случае ошибки
+    */
     save: function (data, onLoad, onError) {
       var xhr = createRequest('POST', onLoad, onError);
 
       xhr.send(data);
     }
-
   };
 })();
